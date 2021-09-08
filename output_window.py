@@ -17,6 +17,10 @@ import os
 import tkinter, tkinter.messagebox
 import winsound
 
+import smtplib
+import imghdr
+from email.message import EmailMessage
+
 from PyQt5.uic.properties import QtGui
 
 
@@ -198,11 +202,16 @@ class Worker(QThread):
                     if label == "No Mask":
                         # capture the unmask ppl
                         timestamp = time.strftime("%d-%b-%Y-%H_%M_%S")
-                        img_name = "img/Unmasked_ppl_{}.jpg".format(timestamp)
+                        img_name = "violators_img/Unmasked_ppl_{}.jpg".format(timestamp)
                         cv2.imwrite(img_name, frame)
                         print("{} written!".format(img_name))
+
+                        # Send email here
+                        self.sendEmail("facemaskdetector2021@gmail.com", "hongkailo2000@gmail.com", "Facemask123", img_name)
+                        print("Email sent!")
+
                         # Alert message box
-                        self.messagebox("Warning", "Please wear your mask la")
+                        self.messagebox("Warning", "Access Denied!\nPlease wear a Face Mask.")
 
             # show the video
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -215,6 +224,25 @@ class Worker(QThread):
         root.withdraw()
         tkinter.messagebox.showwarning(title, text)
         root.destroy()
+
+    def sendEmail(self, sender, receiver, password, attachment):
+        Sender_Email = sender
+        Reciever_Email = receiver
+        Password = password
+        newMessage = EmailMessage()
+        newMessage['Subject'] = "Face Mask Detector System"
+        newMessage['From'] = Sender_Email
+        newMessage['To'] = Reciever_Email
+        newMessage.set_content('Person has been detected without face mask.')
+        files = [attachment]
+        for file in files:
+            with open(file, 'rb') as f:
+                file_data = f.read()
+                file_name = f.name
+            newMessage.add_attachment(file_data, maintype='application', subtype='octet-stream', filename=file_name)
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465)  as smtp:
+            smtp.login(Sender_Email, Password)
+            smtp.send_message(newMessage)
 
     def run(self):
         self.check()
