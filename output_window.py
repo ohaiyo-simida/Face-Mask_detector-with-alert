@@ -14,7 +14,7 @@ import imutils
 import time
 import cv2
 import os
-from tkinter import messagebox
+import tkinter, tkinter.messagebox
 import winsound
 
 from PyQt5.uic.properties import QtGui
@@ -150,7 +150,7 @@ class Worker(QThread):
 
         # return a 2-tuple of the face locations and their corresponding
         # locations
-        return (locs, preds)
+        return locs, preds
 
     def check(self):
         # Detect in real time
@@ -188,9 +188,6 @@ class Worker(QThread):
                     label = "Mask" if mask > withoutMask else "No Mask"
                     color = (0, 255, 0) if label == "Mask" else (0, 0, 255)
 
-                    # if label == "No Mask":
-                    # messagebox.showwarning("Warning", "Diu pls wear your mask la")
-
                     # include the probability in the label
                     label_text = "{}: {:.2f}%".format(label, max(mask, withoutMask) * 100)
 
@@ -198,11 +195,26 @@ class Worker(QThread):
                     cv2.putText(frame, label_text, (startX, startY - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.45, color, 2)
                     cv2.rectangle(frame, (startX, startY), (endX, endY), color, 2)
 
+                    if label == "No Mask":
+                        # capture the unmask ppl
+                        timestamp = time.strftime("%d-%b-%Y-%H_%M_%S")
+                        img_name = "img/Unmasked_ppl_{}.jpg".format(timestamp)
+                        cv2.imwrite(img_name, frame)
+                        print("{} written!".format(img_name))
+                        # Alert message box
+                        self.messagebox("Warning", "Please wear your mask la")
+
             # show the video
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             ConvertToQtFormat = QImage(frame.data, frame.shape[1], frame.shape[0], QImage.Format_RGB888)
             Pic = ConvertToQtFormat.scaled(1280, 720, 1)
             self.ImageUpdate.emit(Pic)
+
+    def messagebox(self, title, text):
+        root = tkinter.Tk()
+        root.withdraw()
+        tkinter.messagebox.showwarning(title, text)
+        root.destroy()
 
     def run(self):
         self.check()
