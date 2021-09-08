@@ -1,0 +1,8 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+	<qresource prefix="icons">
+		<file>icons/lock_32x32.png</file>
+		<file>icons/mail_32x32.png</file>
+		<file>icons/user_32x32.png</file>
+  </qresource>
+</RCC>
