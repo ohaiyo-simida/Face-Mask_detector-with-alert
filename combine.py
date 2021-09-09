@@ -1,3 +1,19 @@
+# -----------------------------------------------------------
+# Face Mask Detection System With Alert Function
+#
+# (C) 2021 Lo Hong Kai, 0198293
+# UOW KDU PG UNIVERSITY COLLEGE
+# Final Year Project 2021
+# -----------------------------------------------------------
+
+import sys
+from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QDialog, QApplication
+from PyQt5.uic import loadUi
+import pyrebase
+import re
+import urllib
+from urllib.request import urlopen
 import sys
 from PyQt5 import QtWidgets
 from PyQt5.QtGui import *
@@ -21,11 +37,147 @@ import imghdr
 from email.message import EmailMessage
 from PyQt5.uic.properties import QtGui
 
+firebaseConfig = {'apiKey': "AIzaSyBM03d2RJ9rEpATRv25LIk-c6bkrtUsQfg",
+                  'authDomain': "face-mask-detection-2021.firebaseapp.com",
+                  'databaseURL': "https://face-mask-detection-2021.firebaseio.com/",
+                  'projectId': "face-mask-detection-2021",
+                  'storageBucket': "face-mask-detection-2021.appspot.com",
+                  'messagingSenderId': "384900987758",
+                  'appId': "1:384900987758:web:866dc09bc7bbfc2ea09f7f",
+                  'measurementId': "G-SRHKT9DV2E"}
+firebase = pyrebase.initialize_app(firebaseConfig)
+auth = firebase.auth()
 
-class MaskDetector(QDialog):
+
+# //////////// LOGIN ///////////////////////
+class Login(QDialog):
     def __init__(self):
-        super(MaskDetector, self).__init__()
+        super(Login, self).__init__()
+        loadUi("ui/login.ui", self)
+        if is_internet():
+            print("Yes")
+        # self.email.setPlaceholderText("Email...")
+        # self.password.setPlaceholderText("Password...")
+        self.password.setEchoMode(QtWidgets.QLineEdit.Password)
 
+        self.loginButton.clicked.connect(self.loginfunction)
+        self.createAccButton.clicked.connect(self.gotocreate)
+
+        self.errorMessage.setVisible(False)
+
+    def loginfunction(self):
+        email = self.email.text()
+        password = self.password.text()
+        # Check is empty
+        if not email or not password:
+            self.errorMessage.setText("All fields cannot be empty.")
+            self.errorMessage.setVisible(True)
+        else:
+            # Validate the email
+            regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+            if not re.fullmatch(regex, email):
+                self.errorMessage.setText("Invalid email format.")
+                self.errorMessage.setVisible(True)
+            else:
+                try:
+                    # login here
+                    auth.sign_in_with_email_and_password(email, password)
+                    # After login
+                    print("Successfully logged in with email: ", email, "and Password: ", password)
+                    self.gotoDetectorScreen(email)
+                except:
+                    self.errorMessage.setText("Incorrect email or password.")
+                    self.errorMessage.setVisible(True)
+
+    def gotocreate(self):
+        createacc = CreateAcc()
+        widget.addWidget(createacc)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
+
+    def gotoDetectorScreen(self, email):
+        ui_OutputDialog = MaskDetector(email)
+        widget.addWidget(ui_OutputDialog)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
+
+
+# //////////// CREATE ACCOUNT ///////////////////////
+class CreateAcc(QDialog):
+    def __init__(self):
+        super(CreateAcc, self).__init__()
+        loadUi("ui/register.ui", self)
+        self.password.setEchoMode(QtWidgets.QLineEdit.Password)
+        self.confirmPassword.setEchoMode(QtWidgets.QLineEdit.Password)
+
+        self.registerButton.clicked.connect(self.createaccfunction)
+        self.loginhereButton.clicked.connect(self.gotologin)
+
+        self.errorMessage.setVisible(False)
+
+    def createaccfunction(self):
+        email = self.email.text()
+        input_password = self.password.text()
+        confirmPassword = self.confirmPassword.text()
+        # Check is empty
+        if not email or not input_password or not confirmPassword:
+            self.errorMessage.setText("All fields cannot be empty.")
+            self.errorMessage.setVisible(True)
+        else:
+            # Validate the email
+            regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+            if not re.fullmatch(regex, email):
+                self.errorMessage.setText("Invalid email format.")
+                self.errorMessage.setVisible(True)
+            else:
+                # Compare password
+                if input_password == confirmPassword:
+                    password = confirmPassword
+                    # validate password
+                    if len(password) < 8:
+                        self.errorMessage.setText("Password min length is 8.")
+                        self.errorMessage.setVisible(True)
+                    elif re.search('[0-9]', password) is None:
+                        self.errorMessage.setText("Password must has at least a digit.")
+                        self.errorMessage.setVisible(True)
+                    elif re.search('[A-Z]', password) is None:
+                        self.errorMessage.setText("Password must has at least 1 uppercase letter.")
+                        self.errorMessage.setVisible(True)
+                    elif re.search('[a-z]', password) is None:
+                        self.errorMessage.setText("Password must has at least 1 lowercase letter.")
+                        self.errorMessage.setVisible(True)
+                    elif re.search('[@#$%^&*?]', password) is None:
+                        self.errorMessage.setText("Password must has at least 1 special symbols.")
+                        self.errorMessage.setVisible(True)
+                    else:
+                        try:
+                            # Register here
+                            auth.create_user_with_email_and_password(email, password)
+                            print("Successfully registered with email:", email, "and Password:", password)
+                            msg = QtWidgets.QMessageBox()
+                            msg.setIcon(QtWidgets.QMessageBox.Information)
+                            msg.setText("Account has been successfully created.")
+                            msg.setWindowTitle("Register")
+                            msg.exec_()
+
+                            self.gotologin()
+                        except:
+                            self.errorMessage.setText("Email has already been taken.")
+                            self.errorMessage.setVisible(True)
+                else:
+                    self.errorMessage.setText("Passwords doesn't match!")
+                    self.errorMessage.setVisible(True)
+
+    def gotologin(self):
+        login = Login()
+        widget.addWidget(login)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
+
+
+# //////////// DETECTION SCREEN ///////////////////////
+class MaskDetector(QDialog):
+    def __init__(self, email):
+        super(MaskDetector, self).__init__()
+        self.email = email
+        print("Email at detector:", email)
         self.available_cameras = QCameraInfo.availableCameras()
         # if not self.available_cameras:
         #     print("No Camera la")
@@ -45,7 +197,7 @@ class MaskDetector(QDialog):
         self.cameraComboBox.addItems([c.description() for c in self.available_cameras])
         self.cameraComboBox.currentIndexChanged.connect(self.select_camera)
         # Mask detector screen
-        self.Worker = Worker(0)
+        self.Worker = Worker(0, self.email)
         self.Worker.start()
         self.Worker.ImageUpdate.connect(self.ImageUpdateSlot)
 
@@ -63,7 +215,7 @@ class MaskDetector(QDialog):
         # change camera source here
         print("Index:", i)
         # i = 0;
-        self.Worker = Worker(i)
+        self.Worker = Worker(i, self.email)
         self.Worker.start()
         self.Worker.ImageUpdate.connect(self.ImageUpdateSlot)
 
@@ -86,12 +238,15 @@ class MaskDetector(QDialog):
             sys.exit()
 
 
+# //////////// CAMERA WORKER ///////////////////////
 class Worker(QThread):
     ImageUpdate = pyqtSignal(QImage)
 
-    def __init__(self, index):
+    def __init__(self, index, email):
         QThread.__init__(self)
         self.index = index
+        self.email = email
+        print("Email at worker: ", self.email)
 
     def detect_and_predict_mask(self, frame, faceNet, maskNet):
         # grab the dimensions of the frame and then construct a blob
@@ -198,15 +353,20 @@ class Worker(QThread):
                     cv2.rectangle(frame, (startX, startY), (endX, endY), color, 2)
 
                     if label == "No Mask":
+                        print("No Mask: ", withoutMask)
                         # capture the unmask ppl
                         timestamp = time.strftime("%d-%b-%Y-%H_%M_%S")
                         img_name = "violators_img/Unmasked_ppl_{}.jpg".format(timestamp)
                         cv2.imwrite(img_name, frame)
                         print("{} written!".format(img_name))
+                        content = 'Person has been detected without face mask.\n\n' \
+                                  'Date: ' + time.strftime("%d-%b-%Y") + '\nTime: ' + time.strftime("%H:%M:%S %p")
 
                         # Send email here
-                        self.sendEmail("facemaskdetector2021@gmail.com", "hongkailo2000@gmail.com", "Facemask123",
-                                       img_name)
+                        sender_Email = "facemaskdetector2021@gmail.com"
+                        reciever_Email = self.email
+                        password = "Facemask123"
+                        self.sendEmail(sender_Email, "hongkailo2000@gmail.com", password, img_name, content)
                         print("Email sent!")
 
                         # Alert message box
@@ -224,7 +384,7 @@ class Worker(QThread):
         tkinter.messagebox.showwarning(title, text)
         root.destroy()
 
-    def sendEmail(self, sender, receiver, password, attachment):
+    def sendEmail(self, sender, receiver, password, attachment, content):
         Sender_Email = sender
         Reciever_Email = receiver
         Password = password
@@ -232,7 +392,7 @@ class Worker(QThread):
         newMessage['Subject'] = "Face Mask Detector System"
         newMessage['From'] = Sender_Email
         newMessage['To'] = Reciever_Email
-        newMessage.set_content('Person has been detected without face mask.')
+        newMessage.set_content(content)
         files = [attachment]
         for file in files:
             with open(file, 'rb') as f:
@@ -247,12 +407,40 @@ class Worker(QThread):
         self.check()
 
 
-app = QApplication(sys.argv)
-mainWindow = MaskDetector()
-widget = QtWidgets.QStackedWidget()
-widget.addWidget(mainWindow)
-widget.setWindowTitle("Face Mask Detector")
-widget.setFixedWidth(970)
-widget.setFixedHeight(960)
-widget.show()
-app.exec_()
+# ###   PUBLIC FUNCTIONS    ###
+def is_internet():
+    """
+    Query internet using python
+    :return:
+    """
+    try:
+        urlopen('https://www.google.com', timeout=1)
+        return True
+    except urllib.error.URLError as Error:
+        print(Error)
+        return False
+
+
+def messagebox(title, text):
+    root = tkinter.Tk()
+    root.withdraw()
+    tkinter.messagebox.showwarning(title, text)
+    root.destroy()
+
+
+# //////////////////////////////////////////   RUN HERE   //////////////////////////////////////////
+while not is_internet():
+    messagebox("No internet", "Try:\n\n-Checking the network cables, modem, and router\n-Reconnecting to Wi-Fi")
+    print("Internet disconnected")
+
+if is_internet():
+    print("Internet is active")
+    app = QApplication(sys.argv)
+    mainWindow = Login()
+    widget = QtWidgets.QStackedWidget()
+    widget.addWidget(mainWindow)
+    widget.setWindowTitle("Face Mask Detection System")
+    widget.setFixedWidth(970)
+    widget.setFixedHeight(960)
+    widget.show()
+    app.exec_()

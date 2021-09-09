@@ -18,6 +18,7 @@ firebase = pyrebase.initialize_app(firebaseConfig)
 
 auth = firebase.auth()
 
+
 class Login(QDialog):
     def __init__(self):
         super(Login, self).__init__()
@@ -118,9 +119,7 @@ class CreateAcc(QDialog):
                             msg.setWindowTitle("Register")
                             msg.exec_()
 
-                            login = Login()
-                            widget.addWidget(login)
-                            widget.setCurrentIndex(widget.currentIndex() + 1)
+                            self.gotologin()
                         except:
                             self.errorMessage.setText("Email has already been taken.")
                             self.errorMessage.setVisible(True)
@@ -139,7 +138,7 @@ mainWindow = Login()
 widget = QtWidgets.QStackedWidget()
 widget.addWidget(mainWindow)
 widget.setWindowTitle("Face Mask Detector")
-widget.setFixedWidth(480)
-widget.setFixedHeight(620)
+widget.setFixedWidth(970)
+widget.setFixedHeight(960)
 widget.show()
 app.exec_()
