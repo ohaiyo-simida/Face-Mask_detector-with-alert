@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>480</width>
-    <height>620</height>
+    <width>970</width>
+    <height>960</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -60,13 +60,95 @@
           <property name="topMargin">
            <number>15</number>
           </property>
+          <item>
+           <spacer name="verticalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Preferred</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>10</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
           <item alignment="Qt::AlignHCenter">
+           <widget class="QLabel" name="label_5">
+            <property name="maximumSize">
+             <size>
+              <width>250</width>
+              <height>250</height>
+             </size>
+            </property>
+            <property name="layoutDirection">
+             <enum>Qt::LeftToRight</enum>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="pixmap">
+             <pixmap>icons/mask_icon.png</pixmap>
+            </property>
+            <property name="scaledContents">
+             <bool>true</bool>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="wordWrap">
+             <bool>false</bool>
+            </property>
+            <property name="margin">
+             <number>0</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_6">
+            <property name="styleSheet">
+             <string notr="true">color:rgb(255, 255, 255); font-size:30pt; text-align: center;</string>
+            </property>
+            <property name="text">
+             <string>Face Mask Detection System</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Preferred</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>50</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
            <widget class="QLabel" name="label">
             <property name="styleSheet">
              <string notr="true">color:rgb(255, 255, 255); font-size:20pt; text-align: center;</string>
             </property>
             <property name="text">
              <string>LOGIN</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
             </property>
            </widget>
           </item>
@@ -81,7 +163,7 @@
             <property name="rightMargin">
              <number>59</number>
             </property>
-            <item row="0" column="0">
+            <item row="1" column="0">
              <widget class="QLabel" name="label_3">
               <property name="styleSheet">
                <string notr="true">color: rgb(231, 231, 231);
@@ -95,7 +177,38 @@ font: 15pt &quot;Verdana&quot;;</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="0" colspan="2">
+            <item row="1" column="1">
+             <widget class="QLineEdit" name="email">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::StrongFocus</enum>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QLineEdit {
+      color: white;
+      font: 15pt &quot;Verdana&quot;;
+      border: None;
+      border-bottom-color: white;
+      border-radius: 10px;
+      padding: 0 8px;
+      background: rgb(25, 25, 40);
+      selection-background-color: darkgray;
+}</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="placeholderText">
+               <string>Email...</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0" colspan="2">
              <widget class="Line" name="line_2">
               <property name="styleSheet">
                <string notr="true">border: 2px solid white;</string>
@@ -105,7 +218,7 @@ font: 15pt &quot;Verdana&quot;;</string>
               </property>
              </widget>
             </item>
-            <item row="2" column="0">
+            <item row="3" column="0">
              <widget class="QLabel" name="label_4">
               <property name="styleSheet">
                <string notr="true">color: rgb(231, 231, 231);
@@ -119,7 +232,7 @@ font: 15pt &quot;Verdana&quot;;</string>
               </property>
              </widget>
             </item>
-            <item row="2" column="1">
+            <item row="3" column="1">
              <widget class="QLineEdit" name="password">
               <property name="minimumSize">
                <size>
@@ -147,7 +260,7 @@ font: 15pt &quot;Verdana&quot;;</string>
               </property>
              </widget>
             </item>
-            <item row="3" column="0" colspan="2">
+            <item row="4" column="0" colspan="2">
              <widget class="Line" name="line_3">
               <property name="styleSheet">
                <string notr="true">border: 2px solid white;</string>
@@ -157,7 +270,7 @@ font: 15pt &quot;Verdana&quot;;</string>
               </property>
              </widget>
             </item>
-            <item row="4" column="0" colspan="2">
+            <item row="5" column="0" colspan="2">
              <spacer name="verticalSpacer">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -168,12 +281,26 @@ font: 15pt &quot;Verdana&quot;;</string>
               <property name="sizeHint" stdset="0">
                <size>
                 <width>20</width>
-                <height>50</height>
+                <height>40</height>
                </size>
               </property>
              </spacer>
             </item>
             <item row="6" column="0" colspan="2">
+             <widget class="QLabel" name="errorMessage">
+              <property name="styleSheet">
+               <string notr="true">color: red;
+font-size: 18px</string>
+              </property>
+              <property name="text">
+               <string>Error message</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="0" colspan="2">
              <widget class="QPushButton" name="loginButton">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -216,55 +343,15 @@ opacity: 200;
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
-             <widget class="QLineEdit" name="email">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>40</height>
-               </size>
-              </property>
-              <property name="focusPolicy">
-               <enum>Qt::StrongFocus</enum>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QLineEdit {
-      color: white;
-      font: 15pt &quot;Verdana&quot;;
-      border: None;
-      border-bottom-color: white;
-      border-radius: 10px;
-      padding: 0 8px;
-      background: rgb(25, 25, 40);
-      selection-background-color: darkgray;
-}</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="placeholderText">
-               <string>Email...</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="0" colspan="2">
-             <widget class="QLabel" name="errorMessage">
-              <property name="styleSheet">
-               <string notr="true">color: red;
-font-size: 18px</string>
-              </property>
-              <property name="text">
-               <string>Error message</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
            </layout>
           </item>
           <item>
            <widget class="QLabel" name="label_2">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
             <property name="styleSheet">
              <string notr="true">color: white;
 padding-top: 30px;</string>
@@ -279,6 +366,12 @@ padding-top: 30px;</string>
           </item>
           <item>
            <widget class="QPushButton" name="createAccButton">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+              <underline>true</underline>
+             </font>
+            </property>
             <property name="cursor">
              <cursorShape>PointingHandCursor</cursorShape>
             </property>
