@@ -53,6 +53,7 @@ auth = firebase.auth()
 class Login(QDialog):
     def __init__(self):
         super(Login, self).__init__()
+        print("[INFO] starting login ui...")
         loadUi("ui/login.ui", self)
 
         self.password.setEchoMode(QtWidgets.QLineEdit.Password)
@@ -106,6 +107,7 @@ class Login(QDialog):
 class CreateAcc(QDialog):
     def __init__(self):
         super(CreateAcc, self).__init__()
+        print("[INFO] starting register ui...")
         loadUi("ui/register.ui", self)
         self.password.setEchoMode(QtWidgets.QLineEdit.Password)
         self.confirmPassword.setEchoMode(QtWidgets.QLineEdit.Password)
@@ -183,6 +185,7 @@ class CreateAcc(QDialog):
 class MaskDetector(QDialog):
     def __init__(self, email):
         super(MaskDetector, self).__init__()
+        print("[INFO] starting detector screen...")
         self.email = email
         print("Email at detector:", email)
         self.available_cameras = QCameraInfo.availableCameras()
@@ -324,7 +327,7 @@ class Worker(QThread):
         faceNet = cv2.dnn.readNet(prototxtPath, weightsPath)
 
         # load the face mask detector model from disk
-        maskNet = load_model("mask_detector.model")
+        maskNet = load_model("new_mask_detector.model")
 
         # initialize the video stream
         print("[INFO] starting video stream...")
@@ -362,6 +365,7 @@ class Worker(QThread):
                     if label == "No Mask":
                         print("No Mask: ", withoutMask)
                         # capture the unmask ppl
+                        print("[INFO] capturing the unmask people...")
                         timestamp = time.strftime("%d-%b-%Y-%H_%M_%S")
                         img_name = "violators_img/Unmasked_ppl_{}.jpg".format(timestamp)
                         cv2.imwrite(img_name, frame)
@@ -375,7 +379,7 @@ class Worker(QThread):
                             receiver_Email = self.email
                             password = "Facemask123"
                             self.sendEmail(sender_Email, receiver_Email, password, img_name, content)
-                            print("Email sent!")
+                            print("[INFO] Email sent!")
 
                         # Alert message box
                         messagebox("Warning", "Access Denied!\nPlease wear a Face Mask.")
