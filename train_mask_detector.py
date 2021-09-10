@@ -23,7 +23,7 @@ import os
 # initialize the initial learning rate, number of epochs to train for,
 # and batch size
 INIT_LR = 1e-4
-EPOCHS = 20
+EPOCHS = 30
 BS = 32
 
 DIRECTORY = r"dataset"
@@ -128,8 +128,8 @@ plt.style.use("ggplot")
 plt.figure()
 plt.plot(np.arange(0, N), H.history["loss"], label="train_loss")
 plt.plot(np.arange(0, N), H.history["val_loss"], label="val_loss")
-plt.plot(np.arange(0, N), H.history["accuracy"], label="train_acc")
-plt.plot(np.arange(0, N), H.history["val_accuracy"], label="val_acc")
+plt.plot(np.arange(0, N), H.history["accuracy"], label="train_acc")  # accuracy of a batch of training data
+plt.plot(np.arange(0, N), H.history["val_accuracy"], label="val_acc")  # accuracy of a batch of testing  data
 plt.title("Training Loss and Accuracy")
 plt.xlabel("Epoch #")
 plt.ylabel("Loss/Accuracy")
