@@ -6,47 +6,44 @@
 # Final Year Project 2021
 # -----------------------------------------------------------
 
-import sys
-from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QDialog, QApplication
-from PyQt5.uic import loadUi
-import pyrebase
 import re
-import urllib
-from urllib.request import urlopen
+import smtplib
 import sys
+import time
+import tkinter
+import tkinter.messagebox
+import urllib
+from email.message import EmailMessage
+from urllib.request import urlopen
+
+import cv2
+import imutils
+import numpy as np
+import pyrebase
 from PyQt5 import QtWidgets
+from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtMultimedia import *
 from PyQt5.QtWidgets import *
 from PyQt5.uic import loadUi
-from PyQt5.QtCore import *
-from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
-from tensorflow.keras.preprocessing.image import img_to_array
-from tensorflow.keras.models import load_model
 from imutils.video import VideoStream
-import numpy as np
-import imutils
-import time
-import cv2
-import os
-import tkinter, tkinter.messagebox
+from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing.image import img_to_array
 
-import smtplib
-import imghdr
-from email.message import EmailMessage
-from PyQt5.uic.properties import QtGui
-
-firebaseConfig = {'apiKey': "AIzaSyBM03d2RJ9rEpATRv25LIk-c6bkrtUsQfg",
-                  'authDomain': "face-mask-detection-2021.firebaseapp.com",
-                  'databaseURL': "https://face-mask-detection-2021.firebaseio.com/",
-                  'projectId': "face-mask-detection-2021",
-                  'storageBucket': "face-mask-detection-2021.appspot.com",
-                  'messagingSenderId': "384900987758",
-                  'appId': "1:384900987758:web:866dc09bc7bbfc2ea09f7f",
-                  'measurementId': "G-SRHKT9DV2E"}
+firebaseConfig = {
+    'apiKey': "AIzaSyBZRN-qaq0NluYrPUxg6l1m2ppmpVQt4-0",
+    'authDomain': "face-mask-detection-2021-8710d.firebaseapp.com",
+    'databaseURL': "https://face-mask-detection-2021-8710d-default-rtdb.firebaseio.com/",
+    'projectId': "face-mask-detection-2021-8710d",
+    'storageBucket': "face-mask-detection-2021-8710d.appspot.com",
+    'messagingSenderId': "78703109154",
+    'appId': "1:78703109154:web:11a0b3be7bee28a057567b",
+    'measurementId': "G-VDV219Y7T0"
+}
 firebase = pyrebase.initialize_app(firebaseConfig)
 auth = firebase.auth()
+db = firebase.database()
 
 
 # //////////// LOGIN ///////////////////////
@@ -84,10 +81,11 @@ class Login(QDialog):
                 else:
                     try:
                         # login here
-                        auth.sign_in_with_email_and_password(email, password)
+                        user = auth.sign_in_with_email_and_password(email, password)
                         # After login
+                        uid = user['localId']
                         print("Successfully logged in with email: ", email, "and Password: ", password)
-                        self.gotoDetectorScreen(email)
+                        self.gotoDetectorScreen(email, uid)
                     except:
                         self.errorMessage.setText("Incorrect email or password.")
                         self.errorMessage.setVisible(True)
@@ -97,8 +95,8 @@ class Login(QDialog):
         widget.addWidget(createacc)
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
-    def gotoDetectorScreen(self, email):
-        ui_OutputDialog = MaskDetector(email)
+    def gotoDetectorScreen(self, email, uid):
+        ui_OutputDialog = MaskDetector(email, uid)
         widget.addWidget(ui_OutputDialog)
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
@@ -183,11 +181,13 @@ class CreateAcc(QDialog):
 
 # //////////// DETECTION SCREEN ///////////////////////
 class MaskDetector(QDialog):
-    def __init__(self, email):
+    def __init__(self, email, uid):
         super(MaskDetector, self).__init__()
         print("[INFO] starting detector screen...")
         self.email = email
+        self.uid = uid
         print("Email at detector:", email)
+        print("ID at detector:", uid)
         self.available_cameras = QCameraInfo.availableCameras()
         # if not self.available_cameras:
         #     print("No Camera la")
@@ -207,7 +207,7 @@ class MaskDetector(QDialog):
         self.cameraComboBox.addItems([c.description() for c in self.available_cameras])
         self.cameraComboBox.currentIndexChanged.connect(self.select_camera)
         # Mask detector screen
-        self.Worker = Worker(0, self.email)
+        self.Worker = Worker(0, email, uid)
         self.Worker.start()
         self.Worker.ImageUpdate.connect(self.ImageUpdateSlot)
 
@@ -252,11 +252,13 @@ class MaskDetector(QDialog):
 class Worker(QThread):
     ImageUpdate = pyqtSignal(QImage)
 
-    def __init__(self, index, email):
+    def __init__(self, index, email, uid):
         QThread.__init__(self)
         self.index = index
         self.email = email
-        print("Email at worker: ", self.email)
+        self.uid = uid
+        print("Email at worker: ", email)
+        print("ID at worker: ", uid)
 
     def detect_and_predict_mask(self, frame, faceNet, maskNet):
         # grab the dimensions of the frame and then construct a blob
@@ -327,7 +329,7 @@ class Worker(QThread):
         faceNet = cv2.dnn.readNet(prototxtPath, weightsPath)
 
         # load the face mask detector model from disk
-        maskNet = load_model("new_mask_detector.model")
+        maskNet = load_model("model/new_mask_detector.model")
 
         # initialize the video stream
         print("[INFO] starting video stream...")
@@ -350,7 +352,7 @@ class Worker(QThread):
                 (startX, startY, endX, endY) = box
                 (mask, withoutMask) = pred
 
-                if withoutMask > 0.995 or mask > 0.5:
+                if withoutMask > 0.995 or mask == 1:
                     # determine the class label and color we'll use to draw the bounding box and text
                     label = "Mask" if mask > withoutMask else "No Mask"
                     color = (0, 255, 0) if label == "Mask" else (0, 0, 255)
@@ -364,22 +366,33 @@ class Worker(QThread):
 
                     if label == "No Mask":
                         print("No Mask: ", withoutMask)
+
+                        # get date and time
+                        date = time.strftime("%d-%b-%Y")
+                        imageTime = time.strftime("%H:%M:%S")
+                        timestamp = time.strftime("%d-%b-%Y-%H_%M_%S")
+
                         # capture the unmask ppl
                         print("[INFO] capturing the unmask people...")
-                        timestamp = time.strftime("%d-%b-%Y-%H_%M_%S")
                         img_name = "violators_img/Unmasked_ppl_{}.jpg".format(timestamp)
                         cv2.imwrite(img_name, frame)
-                        print("{} written!".format(img_name))
-                        content = 'Person has been detected without face mask.\n\n' \
-                                  'Date: ' + time.strftime("%d-%b-%Y") + '\nTime: ' + time.strftime("%H:%M:%S %p")
+                        print("[INFO] {} written!".format(img_name))
 
-                        # Send email here
                         if is_internet():
+                            # send email here
+                            content = 'Person has been detected without face mask.\n\n' \
+                                      'Date: ' + date + '\nTime: ' + imageTime + time.strftime(" %p")
                             sender_Email = "facemaskdetector2021@gmail.com"
                             receiver_Email = self.email
                             password = "Facemask123"
                             self.sendEmail(sender_Email, receiver_Email, password, img_name, content)
-                            print("[INFO] Email sent!")
+                            print("[INFO] Email sent")
+
+                            # Add to database
+                            uid = self.uid
+                            data = {"time": imageTime, "image": img_name}
+                            db.child(uid).child(date).child(imageTime).set(data)
+                            print("[INFO] Record added to database")
 
                         # Alert message box
                         messagebox("Warning", "Access Denied!\nPlease wear a Face Mask.")
