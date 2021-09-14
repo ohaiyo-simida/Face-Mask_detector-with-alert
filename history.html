@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TEST</title>
+
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-database.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.min.js"></script>
+
+</head>
+
+<body>
+    <table class="table-responsive" id="historyTable">
+        <thead>
+            <th>Time</th>
+            <th>Image</th>
+        </thead>
+    </table>
+    </div>
+
+    <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyBZRN-qaq0NluYrPUxg6l1m2ppmpVQt4-0",
+            authDomain: "face-mask-detection-2021-8710d.firebaseapp.com",
+            databaseURL: "https://face-mask-detection-2021-8710d-default-rtdb.firebaseio.com/",
+            projectId: "face-mask-detection-2021-8710d",
+            storageBucket: "face-mask-detection-2021-8710d.appspot.com",
+            messagingSenderId: "78703109154",
+            appId: "1:78703109154:web:11a0b3be7bee28a057567b",
+            measurementId: "G-VDV219Y7T0"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        var firebaseRef = firebase.database().ref("ehkIRTMmZubKIQZlYlbC9AT71wD3/14-Sep-2021");
+        // var data = '';
+        firebaseRef.on("value", (sanpshot) => {
+            var data = '';
+            document.querySelector('#historyTable').innerHTML = `<thead>
+                <th>Time</th>
+                <th>Image</th>
+            </thead>`
+            // document.querySelector('#root').innerHTML = ``
+            sanpshot.forEach(function (element) {
+                value = element.val();
+                console.log(value.image)
+                data += '<tr>';
+                data += '<td>' + value.time + '</td>';
+                data += `<td> <img src="${value.image}" alt="No mask" width="200""></td>`;
+                data += '</tr>';
+                // document.querySelector('#root').innerHTML += `<div>${value.image}</div>`
+            });
+            $('#historyTable').append(data);
+        })
+
+        // firebase
+        //     .database()
+        //     .ref("ehkIRTMmZubKIQZlYlbC9AT71wD3/13-Sep-2021")
+        //     .on("value", (sanpshot) => {
+        //         console.log(sanpshot.val());
+        //     });
+    </script>
+</body>
+
+</html>
