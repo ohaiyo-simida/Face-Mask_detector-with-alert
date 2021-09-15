@@ -368,8 +368,9 @@ class Worker(QThread):
                         print("No Mask: ", withoutMask)
 
                         # get date and time
-                        date = time.strftime("%d-%b-%Y")
-                        imageTime = time.strftime("%H:%M:%S")
+                        date = time.strftime("%Y-%m-%d")
+                        date2 = time.strftime("%d-%b-%Y")
+                        imageTime = time.strftime("%H:%M:%S %p")
                         timestamp = time.strftime("%d-%b-%Y-%H_%M_%S")
 
                         # capture the unmask ppl
@@ -381,7 +382,7 @@ class Worker(QThread):
                         if is_internet():
                             # send email here
                             content = 'Person has been detected without face mask.\n\n' \
-                                      'Date: ' + date + '\nTime: ' + imageTime + time.strftime(" %p")
+                                      'Date: ' + date2 + '\nTime: ' + imageTime
                             sender_Email = "facemaskdetector2021@gmail.com"
                             receiver_Email = self.email
                             password = "Facemask123"
