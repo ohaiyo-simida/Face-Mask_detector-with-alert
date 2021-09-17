@@ -12,23 +12,28 @@
     <!-- <link rel="stylesheet" href="css/home.css"> -->
 
     <!--========== TITLE ==========-->
-    <title>Face Mask Detector System</title>
+    <title>Face Mask Detection System</title>
 
     <!--========== FIREBASE JS ==========-->
     <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-auth.js"></script>
 
-    <script src="js/firebase.js"></script>
+    <!--========== SWEET ALERT JS ==========-->
+    <script src="js/sweetalert2.all.min.js"></script>
+
+
 </head>
 
 <body>
-
     <div class="container">
         <div class="forms-container">
             <div class="signin-signup">
                 <!-- =========== SIGN IN ========== -->
-                <form action="#" class="sign-in-form">
+                <form action="" class="sign-in-form" onsubmit="return false">
+                    <h2 class="title">Face Mask Detection System</h2>
+                    <h2 style="color: #40a573;">------</h2>
+                    <br><br>
                     <h2 class="title">Sign in</h2>
                     <div class="input-field">
                         <i class="fas fa-user"></i>
@@ -42,7 +47,7 @@
                 </form>
 
                 <!-- =========== SIGN UP ========== -->
-                <form action="#" class="sign-up-form">
+                <form action="" class="sign-up-form" onsubmit="return false">
                     <h2 class="title">Sign up</h2>
                     <div class="input-field">
                         <i class="fas fa-user"></i>
@@ -70,7 +75,6 @@
                         Register here by click the button below
                     </p>
                     <button class="btn transparent" id="sign-up-btn">Sign up</button>
-                    <button class="btn transparent" onclick="signOut()">logout</button>
                 </div>
                 <img src="imgs/signIn_signUp/login.svg" class="image" alt="" />
             </div>
@@ -88,7 +92,7 @@
         </div>
     </div>
 
-    <script src="js/signIn_signUp.js"></script>
+    <script src="js/signIn.js"></script>
 </body>
 
 </html>
