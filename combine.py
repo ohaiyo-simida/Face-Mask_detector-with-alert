@@ -140,7 +140,7 @@ class CreateAcc(QDialog):
                         password = confirmPassword
                         # validate password
                         if len(password) < 8:
-                            self.errorMessage.setText("Password min length is 8.")
+                            self.errorMessage.setText("Password must have at least 8 characters.")
                             self.errorMessage.setVisible(True)
                         elif re.search('[0-9]', password) is None:
                             self.errorMessage.setText("Password must has at least a digit.")
