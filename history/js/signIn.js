@@ -28,11 +28,16 @@ function signIn() {
 
     const promise = auth.signInWithEmailAndPassword(email.value, pass.value);
     promise.catch(e => alert(e.message));
+<<<<<<< HEAD
     if (user) {
         alert("sign in");
         var uid = user.uid;
         window.location.href = 'history.html?id=' + uid;
     }
+=======
+    // alert("sign in");
+    window.location.href = 'history.html?id=123';
+>>>>>>> origin/master
 }
 
 function signOut() {
@@ -40,6 +45,7 @@ function signOut() {
     alert("Sign out!");
 }
 
+<<<<<<< HEAD
 //active user to homepage
 firebase.auth().onAuthStateChanged((user) => {
     if (user) {
@@ -49,3 +55,13 @@ firebase.auth().onAuthStateChanged((user) => {
         // alert("No Active user Found")
     }
 })
+=======
+auth.onAuthStateChanged(function (user) {
+    if (user) {
+        //is sign in
+        window.location.href = 'history.html?id=123';
+    } else {
+
+    }
+});
+>>>>>>> origin/master
