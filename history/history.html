@@ -6,31 +6,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Face Mask Detector History</title>
 
-    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <!--========== FIREBASE JS ==========-->
     <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-auth.js"></script>
+    <script src="js/firebase.js"></script>
 
 
+
+    <!--========== JQUERY JS ==========-->
     <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
     <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
 
+    <!--========== CSS ==========-->
     <link rel="stylesheet" href="css\history.css">
 
 </head>
 
 <body>
+    <header>
+        <ul>
+            <li id="title">Real-time Face Mask Detector With Alert System - History</li>
+            <li style="float:right" class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn">My Account</a>
+                <div class="dropdown-content" style="float:right;">
+                    <a href="#" onclick="signOut()">Log out</a>
+                    <script>
+                        function signOut() {
+                            auth.signOut();
+                            // After sign out
+                        }
+                    </script>
+                    <a href="#">Change password</a>
+                </div>
+            </li>
+        </ul>
+    </header>
     <!-- <form action="history.html"> -->
     <div id="root"></div>
     <div class="container">
-        <h1>Real-time Face Mask Detector With Alert System - History</h1>
+        <!-- <h1>Real-time Face Mask Detector With Alert System - History</h1> -->
+        <h2>Select a date to view a specfic day history</h2>
         <div id="datePicker">
             <label for="date">Pick a date:</label>
             <input type="date" name="selectDate" id="selectDate" required />
             <button id="submit">Submit</button>
         </div>
-        <p id="curentDate"></p>
+        <p id="curentSelectedDate"></p>
         <div class="tableContainer">
-            <table class="table-responsive" id="historyTable">
+            <table class="table-responsive" id="historyTable" style="overflow-x:auto;">
                 <thead>
                     <th>No</th>
                     <th>Image</th>
@@ -44,38 +68,81 @@
 
 
 <script>
+    // --------------------------------------- Enter button onClick ---------------------------
     $('#submit').on('click', function () {
         var date = new Date($('#selectDate').val());
-        var day = date.getDate();
-        var month = date.getMonth() + 1;
-        var year = date.getFullYear();
-        alert(date)
-        alert([day, month, year].join('/'));
+        if (date == "Invalid Date") {
+            alert(date)
+        }
+        else {
+            var day = date.getDate();
+            if (day < 10) {
+                day = "0" + day;
+            }
+
+            var month = date.getMonth() + 1;
+            if (month < 10) {
+                month = "0" + month;
+            }
+
+            var year = date.getFullYear();
+            var selectdate = [year, month, day].join('-')
+            document.getElementById("curentSelectedDate").innerHTML = "Curent selected date: <b>" + selectdate + "</b>";
+            updateRecord(selectdate)
+        }
     });
 
+    function updateRecord(date) {
+        console.log("update: " + date)
+        var firebaseRef = firebase.database().ref("ehkIRTMmZubKIQZlYlbC9AT71wD3/" + date);
+
+        firebaseRef.on("value", (sanpshot) => {
+            var data = '';
+            var counter = 0;
+            document.querySelector('#historyTable').innerHTML = `<thead>
+            <th>No</th>
+            <th>Image</th>
+            <th>Time</th>
+        </thead>`
+            // document.querySelector('#root').innerHTML = ``
+            sanpshot.forEach(function (element) {
+                counter += 1
+                value = element.val();
+                // console.log(value.image)
+                data += '<tr>';
+                data += '<td>' + counter + '</td>';
+                data += `<td> <img src="../${value.image}" alt="No mask" width="200""></td>`;
+                data += '<td>' + value.time + '</td>';
+                data += '</tr>';
+                // document.querySelector('#root').innerHTML += `<div>${value.image}</div>`
+            });
+            $('#historyTable').append(data);
+        })
+    }
+
     // --------------------------------------- Firebase configuration ---------------------------
-    var firebaseConfig = {
-        apiKey: "AIzaSyBZRN-qaq0NluYrPUxg6l1m2ppmpVQt4-0",
-        authDomain: "face-mask-detection-2021-8710d.firebaseapp.com",
-        databaseURL: "https://face-mask-detection-2021-8710d-default-rtdb.firebaseio.com/",
-        projectId: "face-mask-detection-2021-8710d",
-        storageBucket: "face-mask-detection-2021-8710d.appspot.com",
-        messagingSenderId: "78703109154",
-        appId: "1:78703109154:web:11a0b3be7bee28a057567b",
-        measurementId: "G-VDV219Y7T0"
-    };
-    firebase.initializeApp(firebaseConfig);
+    // var firebaseConfig = {
+    //     apiKey: "AIzaSyBZRN-qaq0NluYrPUxg6l1m2ppmpVQt4-0",
+    //     authDomain: "face-mask-detection-2021-8710d.firebaseapp.com",
+    //     databaseURL: "https://face-mask-detection-2021-8710d-default-rtdb.firebaseio.com/",
+    //     projectId: "face-mask-detection-2021-8710d",
+    //     storageBucket: "face-mask-detection-2021-8710d.appspot.com",
+    //     messagingSenderId: "78703109154",
+    //     appId: "1:78703109154:web:11a0b3be7bee28a057567b",
+    //     measurementId: "G-VDV219Y7T0"
+    // };
+    // firebase.initializeApp(firebaseConfig);
 
     // --------------------------------------- Date picker ---------------------------------------
     firebase
         .database()
-        .ref("testID/date")
+        .ref("ehkIRTMmZubKIQZlYlbC9AT71wD3/date")
         .on("value", (sanpshot) => {
             const dateArray = [];
             sanpshot.forEach(function (element) {
                 value = element.val();
                 dateArray.push(value)
-                // console.log("Array:" + dateArray)
+                console.log("Array:" + dateArray)
                 var input = document.getElementById("selectDate");
                 input.min = dateArray[0];
                 input.max = dateArray[dateArray.length - 1];
