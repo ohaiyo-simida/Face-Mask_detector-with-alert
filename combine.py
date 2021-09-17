@@ -393,6 +393,7 @@ class Worker(QThread):
                             uid = self.uid
                             data = {"time": imageTime, "image": img_name}
                             db.child(uid).child(date).child(imageTime).set(data)
+                            db.child(uid).child("date").push(date)
                             print("[INFO] Record added to database")
 
                         # Alert message box
