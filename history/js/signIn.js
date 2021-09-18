@@ -1,4 +1,4 @@
-
+// --------------------------------------- UI animation ---------------------------
 const sign_in_btn = document.querySelector("#sign-in-btn");
 const sign_up_btn = document.querySelector("#sign-up-btn");
 const container = document.querySelector(".container");
@@ -11,6 +11,7 @@ sign_in_btn.addEventListener("click", () => {
     container.classList.remove("sign-up-mode");
 });
 
+// --------------------------------------- Firebase configuration ---------------------------
 var firebaseConfig = {
     apiKey: "AIzaSyBZRN-qaq0NluYrPUxg6l1m2ppmpVQt4-0",
     authDomain: "face-mask-detection-2021-8710d.firebaseapp.com",
@@ -25,6 +26,7 @@ firebase.initializeApp(firebaseConfig);
 
 const auth = firebase.auth();
 
+// --------------------------------------- SIGN UP ---------------------------
 function signUp() {
     var email = document.getElementById("signUpEmail").value;
     var pass = document.getElementById("signUpPassword").value;
@@ -36,8 +38,9 @@ function signUp() {
     // (?=.*[!@#$%^&*])  // should contain at least one special character
     var vpass = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,}$/;
 
-    // compare password
+    // check is empty
     if (email != "" && pass != "" && confirmPass != "") {
+        // compare password
         if (pass != confirmPass) {
             Swal.fire({
                 icon: 'error',
@@ -65,12 +68,14 @@ function signUp() {
                 } else {
                     // sign up here
                     auth.createUserWithEmailAndPassword(email, pass).catch(function (error) {
+                        // error occur
                         Swal.fire({
                             icon: 'error',
                             title: 'Oops...',
                             html: error.message
                         })
                     }).then(function (user) {
+                        // is sign up
                         if (user) {
                             Swal.fire({
                                 icon: 'success',
@@ -92,19 +97,22 @@ function signUp() {
     }
 }
 
+// --------------------------------------- SIGN IN ---------------------------
 function signIn() {
     var email = document.getElementById("signInEmail").value;
     var pass = document.getElementById("signInPassword").value;
-    // const promise = auth.signInWithEmailAndPassword(email.value, pass.value);
-    // promise.catch(e => alert(e.message));
+    //check is empty
     if (email != "" && pass != "") {
+        // sign in here
         auth.signInWithEmailAndPassword(email, pass).catch(function (error) {
+            // error occur
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
                 html: error.message
             })
         }).then(function (user) {
+            //is sign in
             if (user) {
                 Swal.fire({
                     icon: 'success',
@@ -121,26 +129,17 @@ function signIn() {
             text: "All fields cannot be empty."
         });
     }
-
-
 }
 
-function signOut() {
-    auth.signOut();
-    alert("Sign out!");
-}
-
-//active user to homepage
+// --------------------------------------- CHECK CURENT USER STATUS ---------------------------
 firebase.auth().onAuthStateChanged((user) => {
     if (user) {
         console.log("loged in");
-        var uid = user.uid;
         setTimeout(function () {
             window.location.href = 'history.html';
         }, 2000)
 
     } else {
-        console.log("No user")
-        // alert("No Active user Found")
+        console.log("No Active user Found");
     }
-})
+});

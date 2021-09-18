@@ -4,7 +4,14 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--========== TITLE ==========-->
     <title>Face Mask Detector History</title>
+
+    <!--========== CSS ==========-->
+    <link rel="stylesheet" href="css\history.css">
+
+    <!--========== BOX ICONS ==========-->
+    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
 
     <!--========== FIREBASE JS ==========-->
     <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-app.js"></script>
@@ -18,40 +25,55 @@
     <!--========== JQUERY JS ==========-->
     <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
     <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
-
-    <!--========== CSS ==========-->
-    <link rel="stylesheet" href="css\history.css">
-
 </head>
 
 <body>
+    <!-- =========== HEADER ========== -->
     <header>
         <ul>
             <li id="title">Real-time Face Mask Detector With Alert System - History</li>
             <li style="float:right" class="dropdown">
-                <a href="javascript:void(0)" class="dropbtn">My Account</a>
+                <a href="javascript:void(0)" class="dropbtn"><i class='bx bxs-user' style="font-size: 14px;"></i> My
+                    Account</a>
                 <div class="dropdown-content" style="float:right;">
-                    <a href="#" onclick="signOut()">Log out</a>
+                    <a href="#" onclick="signOut()"><i class='bx bxs-log-out' style="font-size: 14px;"></i> Log out</a>
                     <!-- // TODO: Change password -->
-                    <a href="#">Change password</a>
+                    <a href="changePassword.html"><i class='bx bxs-user-detail' style="font-size: 14px;"></i> Change
+                        password</a>
                 </div>
             </li>
         </ul>
     </header>
 
+    <!-- =========== MAIN CONTAINER ========== -->
     <div id="root"></div>
-    
+
     <div class="container">
         <!-- <h1>Real-time Face Mask Detector With Alert System - History</h1> -->
-        <h2>Select a date to view a specfic day history</h2>
+        <h3>Select a date to view a specfic day history</h3>
         <div id="datePicker">
             <label for="date">Pick a date:</label>
             <input type="date" name="selectDate" id="selectDate" required />
-            <button id="submit">Submit</button>
+            <button id="submit" class="enterButton">Enter</button>
         </div>
 
-        <p id="curentSelectedDate"></p>
+        <p id="curentSelectedDate">Curent date: <b><span id='date-time'></span></b></p>
+        <script>
+            function convertTZ(date, tzString) {
+                return new Date((typeof date === "string" ? new Date(date) : date).toLocaleString("en-US", { timeZone: tzString }));
+            }
 
+            var currentDate = new Date();
+            var today = convertTZ(currentDate, "Asia/Singapore");
+            // cahnge date format to YYYY-MM-DD
+            var todayDate = today.getFullYear() + '-' +
+                ("0" + (today.getMonth() + 1)).slice(-2) + '-' +
+                ("0" + today.getDate()).slice(-2);
+                
+            document.getElementById('date-time').innerHTML = todayDate;
+        </script>
+
+        <!-- =========== TABLE ========== -->
         <div class="tableContainer">
             <table class="table-responsive" id="historyTable" style="overflow-x:auto;">
                 <thead>

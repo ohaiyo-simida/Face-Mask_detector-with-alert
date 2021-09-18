@@ -11,6 +11,7 @@ var firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 
+// --------------------------------------- Get current date ---------------------------
 function convertTZ(date, tzString) {
     return new Date((typeof date === "string" ? new Date(date) : date).toLocaleString("en-US", { timeZone: tzString }));
 }
@@ -20,6 +21,7 @@ var today = convertTZ(date, "Asia/Singapore");
 // cahnge date format to YYYY-MM-DD
 var todayDate = today.getFullYear() + '-' + ("0" + (today.getMonth() + 1)).slice(-2) + '-' + ("0" + today.getDate()).slice(-2);
 
+// --------------------------------------- CHECK CURENT USER STATUS ---------------------------
 firebase.auth().onAuthStateChanged((user) => {
     if (user) {
         console.log("curent user:" + user.uid);
@@ -72,7 +74,7 @@ firebase.auth().onAuthStateChanged((user) => {
     }
 })
 
-// --------------------------------------- Logout -------------------------------------
+// --------------------------------------- SIGN OUT ---------------------------
 const auth = firebase.auth();
 function signOut() {
     if (confirm('Are you sure you want to log out?')) {
