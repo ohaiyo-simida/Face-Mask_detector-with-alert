@@ -5,7 +5,7 @@
 # UOW KDU PG UNIVERSITY COLLEGE
 # Final Year Project 2021
 # -----------------------------------------------------------
-
+import os
 import re
 import smtplib
 import sys
@@ -13,6 +13,7 @@ import time
 import tkinter
 import tkinter.messagebox
 import urllib
+import webbrowser
 from email.message import EmailMessage
 from urllib.request import urlopen
 
@@ -211,6 +212,9 @@ class MaskDetector(QDialog):
         self.Worker.start()
         self.Worker.ImageUpdate.connect(self.ImageUpdateSlot)
 
+        # History
+        self.historyButton.clicked.connect(self.historyEvent)
+
         # Quit
         self.quitButton.clicked.connect(self.closeEvent)
 
@@ -231,6 +235,10 @@ class MaskDetector(QDialog):
 
     def ImageUpdateSlot(self, Image):
         self.cameraLabel.setPixmap(QPixmap.fromImage(Image))
+
+    # History
+    def historyEvent(self):
+        webbrowser.open('file://' + os.path.realpath('history/history.html'))
 
     # Quit
     def closeEvent(self, event):
@@ -452,6 +460,7 @@ if is_internet():
     mainWindow = Login()
     widget = QtWidgets.QStackedWidget()
     widget.addWidget(mainWindow)
+    widget.setWindowIcon(QIcon('ui/icons/mask_icon.png'))
     widget.setWindowTitle("Face Mask Detection System")
     widget.setFixedWidth(970)
     widget.setFixedHeight(960)
