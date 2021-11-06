@@ -201,6 +201,30 @@ font-size:18px;</string>
     </item>
    </layout>
   </widget>
+  <widget class="QPushButton" name="historyButton">
+   <property name="geometry">
+    <rect>
+     <x>680</x>
+     <y>870</y>
+     <width>131</width>
+     <height>36</height>
+    </rect>
+   </property>
+   <property name="cursor">
+    <cursorShape>PointingHandCursor</cursorShape>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(231, 231, 231);
+font: 18px &quot;Verdana&quot;;
+border: 2px solid orange;
+padding: 5px;
+border-radius: 3px;
+opacity: 200;</string>
+   </property>
+   <property name="text">
+    <string>History</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>
