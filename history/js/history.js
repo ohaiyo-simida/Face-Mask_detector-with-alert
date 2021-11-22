@@ -49,9 +49,9 @@ firebase.auth().onAuthStateChanged((user) => {
             var data = '';
             var counter = 0;
             document.querySelector('#historyTable').innerHTML = `<thead>
-            <th>No</th>
-            <th>Image</th>
-            <th>Time</th>
+            <th onclick="sortTable(0)">No</th>
+            <th >Image</th>
+            <th onclick="sortTable(2)">Time</th>
         </thead>`
             // document.querySelector('#root').innerHTML = ``
             sanpshot.forEach(function (element) {
@@ -61,7 +61,7 @@ firebase.auth().onAuthStateChanged((user) => {
                 data += '<tr>';
                 data += '<td>' + counter + '</td>';
                 data += `<td> <img src="../${value.image}" alt="No mask" width="200""></td>`;
-                data += '<td>' + value.time + '</td>';
+                data += '<td id="idtime" >' + value.time + '</td>';
                 data += '</tr>';
                 // document.querySelector('#root').innerHTML += `<div>${value.image}</div>`
             });
@@ -129,9 +129,9 @@ function specificRecord(uid, date) {
         var data = '';
         var counter = 0;
         document.querySelector('#historyTable').innerHTML = `<thead>
-            <th>No</th>
+            <th onclick="sortTable(0)">No</th>
             <th>Image</th>
-            <th>Time</th>
+            <th onclick="sortTable(2)">Time</th>
         </thead>`
         // document.querySelector('#root').innerHTML = ``
         sanpshot.forEach(function (element) {
@@ -150,9 +150,64 @@ function specificRecord(uid, date) {
 }
 
 
-    // firebase
-    //     .database()
-    //     .ref("ehkIRTMmZubKIQZlYlbC9AT71wD3/13-Sep-2021")
-    //     .on("value", (sanpshot) => {
-    //         console.log(sanpshot.val());
-    //     });
+// firebase
+//     .database()
+//     .ref("ehkIRTMmZubKIQZlYlbC9AT71wD3/13-Sep-2021")
+//     .on("value", (sanpshot) => {
+//         console.log(sanpshot.val());
+//     });
+
+function sortTable(n) {
+    var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+    table = document.getElementById("historyTable");
+    switching = true;
+    //Set the sorting direction to ascending:
+    dir = "asc";
+    /*Make a loop that will continue until
+    no switching has been done:*/
+    while (switching) {
+        //start by saying: no switching is done:
+        switching = false;
+        rows = table.rows;
+        /*Loop through all table rows (except the
+        first, which contains table headers):*/
+        for (i = 1; i < (rows.length - 1); i++) {
+            //start by saying there should be no switching:
+            shouldSwitch = false;
+            /*Get the two elements you want to compare,
+            one from current row and one from the next:*/
+            x = rows[i].getElementsByTagName("TD")[n];
+            y = rows[i + 1].getElementsByTagName("TD")[n];
+            /*check if the two rows should switch place,
+            based on the direction, asc or desc:*/
+            if (dir == "asc") {
+                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                    //if so, mark as a switch and break the loop:
+                    shouldSwitch = true;
+                    break;
+                }
+            } else if (dir == "desc") {
+                if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                    //if so, mark as a switch and break the loop:
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+        }
+        if (shouldSwitch) {
+            /*If a switch has been marked, make the switch
+            and mark that a switch has been done:*/
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+            //Each time a switch is done, increase this count by 1:
+            switchcount++;
+        } else {
+            /*If no switching has been done AND the direction is "asc",
+            set the direction to "desc" and run the while loop again.*/
+            if (switchcount == 0 && dir == "asc") {
+                dir = "desc";
+                switching = true;
+            }
+        }
+    }
+}
