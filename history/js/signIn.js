@@ -13,14 +13,14 @@ sign_in_btn.addEventListener("click", () => {
 
 // --------------------------------------- Firebase configuration ---------------------------
 var firebaseConfig = {
-    apiKey: "AIzaSyBZRN-qaq0NluYrPUxg6l1m2ppmpVQt4-0",
-    authDomain: "face-mask-detection-2021-8710d.firebaseapp.com",
-    databaseURL: "https://face-mask-detection-2021-8710d-default-rtdb.firebaseio.com/",
-    projectId: "face-mask-detection-2021-8710d",
-    storageBucket: "face-mask-detection-2021-8710d.appspot.com",
-    messagingSenderId: "78703109154",
-    appId: "1:78703109154:web:11a0b3be7bee28a057567b",
-    measurementId: "G-VDV219Y7T0"
+    apiKey: "",
+    authDomain: "",
+    databaseURL: "",
+    projectId: "",
+    storageBucket: "",
+    messagingSenderId: "",
+    appId: "",
+    measurementId: ""
 };
 firebase.initializeApp(firebaseConfig);
 
